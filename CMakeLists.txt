@@ -23,6 +23,18 @@ if (NOT Qt6Core_FOUND)
     find_package(Qt5 COMPONENTS Core QUIET)
 endif()
 
+# Qt versions installed by conda packages include some extra dependencies
+if(QT_LIBINFIX STREQUAL "_conda")
+    message("Found Qt installed by conda package. Getting specific extra dependencies...")
+    # Qt5 and Qt6 dependencies
+    sofa_find_package(ZSTD REQUIRED) # required by Qt5::Core_conda
+    sofa_find_package(PCRE2 COMPONENTS 16BIT REQUIRED) # required by Qt5::Core_conda
+    sofa_find_package(PNG REQUIRED) # required by Qt5::Gui_conda
+    if(SOFA_BUILD_RELEASE_PACKAGE AND CMAKE_SYSTEM_NAME STREQUAL Windows)
+        sofa_install_libraries(TARGETS ZSTD::ZSTD PNG::PNG PCRE2::16BIT)
+    endif()
+endif()
+
 if (Qt6Core_FOUND)
     message("${PROJECT_NAME}: will use Qt6")
     find_package(Qt6 COMPONENTS Gui GuiTools Widgets WidgetsTools OpenGLWidgets REQUIRED)
@@ -89,7 +101,18 @@ if(Sofa.GL_FOUND)
     if(SOFA_QT_ENABLE_QGLVIEWER)
 
         find_package(QGLViewer QUIET)
-        if(NOT QGLViewer_FOUND AND SOFA_ALLOW_FETCH_DEPENDENCIES)
+        if(QGLViewer_FOUND)
+            # XXX Don't get why we don't have to force Qt Xml installation on windows
+            # when QGLViewer is fetched
+            if(SOFA_BUILD_RELEASE_PACKAGE AND CMAKE_SYSTEM_NAME STREQUAL Windows)
+                sofa_install_libraries(TARGETS QGLViewer)
+                if (Qt5Core_FOUND)
+                    sofa_install_libraries(TARGETS Qt5::Xml)
+                elseif (Qt6Core_FOUND)
+                    sofa_install_libraries(TARGETS Qt::Xml)
+                endif()
+            endif()
+        elseif(NOT QGLViewer_FOUND AND SOFA_ALLOW_FETCH_DEPENDENCIES)
             message("Sofa.Qt: DEPENDENCY QGLViewer NOT FOUND. SOFA_ALLOW_FETCH_DEPENDENCIES is ON, fetching QGLViewer...")
             include(FetchContent)
             FetchContent_Declare(QGLViewer
