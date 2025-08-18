@@ -24,25 +24,9 @@
 #include <ui_InspectorDock.h>
 #include <sofa/core/objectmodel/Base.h>
 #include <set>
-#include <json.h>
 
 namespace sofa::qt
 {
-
-class ItemStyle
-{
-public:
-    std::optional<std::string> group;
-    std::optional<int> priority;
-    std::optional<bool> readonly;
-    std::optional<bool> show;
-    sofa::core::objectmodel::BaseData* data;
-
-    ItemStyle();
-    virtual ~ItemStyle();
-    ItemStyle(const ItemStyle& style);
-    ItemStyle(const ItemStyle& style, const ItemStyle& parentStyle);
-};
 
 class SOFA_QT_API InspectorDock: public QDockWidget, public Ui::InspectorDock
 {
@@ -56,11 +40,6 @@ private:
     void updateContentFromBase(sofa::core::objectmodel::Base* base);
 
     std::set<sofa::core::objectmodel::Base::SPtr> m_currentBases;
-    nlohmann::json itemStyle;
-
-    std::map<std::string, ItemStyle> getDataStylesFor(std::string className);
-    ItemStyle getDataStyle(const std::string &dataName,
-                           const std::map<std::string, ItemStyle>& allDataStyles, const ItemStyle& parentStyle);
 };
 
 } // namespace sofa::qt
