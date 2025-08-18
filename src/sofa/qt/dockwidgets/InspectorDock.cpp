@@ -190,6 +190,14 @@ void InspectorDock::updateContentFromBase(sofa::core::objectmodel::Base* base)
                 }
 
                 auto dataWidget = DataWidget::CreateDataWidget(dwarg);
+                if (dataWidget == nullptr)
+                {
+                    dataWidget = new QDataSimpleEdit(this,dwarg.data->getName().c_str(), dwarg.data);
+                    dataWidget->createWidgets();
+                    dataWidget->setDataReadOnly(dwarg.readOnly);
+                    dwarg.readOnly=true;
+                }
+
                 if(!dwarg.readOnly)
                 {
                     connect(dataWidget, &DataWidget::WidgetDirty, this, [dataWidget](bool){
@@ -213,10 +221,7 @@ void InspectorDock::updateContentFromBase(sofa::core::objectmodel::Base* base)
                     s << "\nDefault value: " << defaultValue;
                 }
                 label->setToolTip(QString::fromStdString(s.str()));
-                if(dataWidget)
-                    dataWidget->setToolTip(QString::fromStdString(s.str()));
-                else
-                    dmsg_error("InspectorDock")  << "Missing data widget";
+                dataWidget->setToolTip(QString::fromStdString(s.str()));
             }
         }
     }
