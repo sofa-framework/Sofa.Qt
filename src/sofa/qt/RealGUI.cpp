@@ -144,8 +144,7 @@ using namespace sofa::core::visual;
 class QSOFAApplication : public QApplication
 {
 public:
-    void setDefaultStyle(){
-        setStyle("Fusion");
+    void setStyle(){
         QPalette palette = QApplication::style()->standardPalette();
         setPalette(palette);
         setStyleSheet(R"(
@@ -160,7 +159,7 @@ public:
         QCoreApplication::setOrganizationDomain("sofa");
         QCoreApplication::setApplicationName("runSofa");
 
-        setDefaultStyle();
+        setStyle();
     }
 
 #if QT_VERSION < 0x050000
