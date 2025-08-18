@@ -24,7 +24,6 @@
 #include "ModifyObject.h"
 #include <sofa/type/Vec.h>
 #include <sofa/defaulttype/VecTypes.h>
-//#include <sofa/defaulttype/RigidTypes.h>
 #include <sofa/type/fixed_array.h>
 #include <sofa/core/topology/Topology.h>
 #include <sofa/linearalgebra/CompressedRowSparseMatrixConstraint.h>
@@ -970,61 +969,5 @@ public:
     }
     
 };
-
-////////////////////////////////////////////////////////////////
-/// OptionsGroup support
-////////////////////////////////////////////////////////////////
-
-
-class RadioDataWidget : public TDataWidget<sofa::helper::OptionsGroup >
-{
-    Q_OBJECT
-public :
-
-    ///The class constructor takes a TData<RadioTrick> since it creates
-    ///a widget for a that particular data type.
-    RadioDataWidget(QWidget* parent, const char* name,
-            core::objectmodel::Data<sofa::helper::OptionsGroup >* m_data)
-        : TDataWidget<sofa::helper::OptionsGroup >(parent,name,m_data) {}
-
-    ///In this method we  create the widgets and perform the signal / slots connections.
-    virtual bool createWidgets();
-    virtual void setDataReadOnly(bool readOnly);
-
-protected:
-    ///Implements how update the widgets knowing the data value.
-    virtual void readFromData();
-
-    ///Implements how to update the data, knowing the widget value.
-    virtual void writeToData();
-
-    QButtonGroup *buttonList;
-    QComboBox    *comboList;
-    bool buttonMode;
-};
-
-class SelectableItemWidget final : public TDataWidget<helper::BaseSelectableItem>
-{
-    Q_OBJECT
-public :
-
-    SelectableItemWidget(QWidget* parent, const char* name,
-            core::BaseData* m_data, const helper::BaseSelectableItem* item);
-
-    bool createWidgets() override;
-    void setDataReadOnly(bool readOnly) override;
-
-protected:
-    void readFromData() override;
-
-    void writeToData() override;
-
-    QButtonGroup *m_buttonList { nullptr };
-    QComboBox    *m_comboList { nullptr };
-    bool m_buttonMode { false };
-
-    const helper::BaseSelectableItem* m_selectableItem { nullptr };
-};
-
 
 } //namespace sofa::qt
