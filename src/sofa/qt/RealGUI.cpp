@@ -537,7 +537,7 @@ RealGUI::RealGUI ( const char* viewername)
         if(sofaViewer)
             tmp->content->setText(sofaViewer->helpString());
         else
-            tmp->content->setText("No documentation for this viewer");
+            tmp->content->setText("There is no documentation for this viewer");
         dialog->open();
     });
 }

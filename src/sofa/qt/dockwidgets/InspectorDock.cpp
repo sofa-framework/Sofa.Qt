@@ -196,8 +196,27 @@ void InspectorDock::updateContentFromBase(sofa::core::objectmodel::Base* base)
                         dataWidget->updateDataValue();
                     });
                 }
+                auto label = new QLabel(QString::fromStdString((data->getName())));
+                formLayout->addRow(label, dataWidget);
 
-                formLayout->addRow(QString::fromStdString(data->getName()), dataWidget);
+                // Build the tooltip associated with this data
+                const std::string& help = data->getHelp().c_str();
+                const std::string valuetype = data->getValueTypeString();
+                const std::string defaultValue = data->getDefaultValueString();
+                std::stringstream s;
+
+                s << "<i>" << (!help.empty() ? help : "< No help found >")
+                  << "</i>\n"
+                  << "\nData type: " << valuetype;
+                if (!defaultValue.empty())
+                {
+                    s << "\nDefault value: " << defaultValue;
+                }
+                label->setToolTip(QString::fromStdString(s.str()));
+                if(dataWidget)
+                    dataWidget->setToolTip(QString::fromStdString(s.str()));
+                else
+                    dmsg_error("InspectorDock")  << "Missing data widget";
             }
         }
     }
