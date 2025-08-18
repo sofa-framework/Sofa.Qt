@@ -516,11 +516,18 @@ RealGUI::RealGUI ( const char* viewername)
 
     m_filelistener = new RealGUIFileListener(this);
 
-    connect(actionInspector, &QAction::toggled, m_inspectorDock, &QDockWidget::setVisible);
-    connect(m_inspectorDock, &QDockWidget::visibilityChanged, actionInspector, &QAction::setChecked);
-    connect(actionControls, &QAction::toggled, dockWidget, &QDockWidget::setVisible);
-    connect(dockWidget, &QDockWidget::visibilityChanged, actionControls, &QAction::setChecked);
+    // Replace the menu's actions by the one generated from the docks.
+    auto action = m_inspectorDock->toggleViewAction();
+    action->setText(actionInspector->text());
+    View->insertAction(actionInspector, action);
+    View->removeAction(actionInspector);
+    actionInspector = action;
 
+    action = dockWidget->toggleViewAction();
+    action->setText(actionControls->text());
+    View->insertAction(actionControls, action);
+    View->removeAction(actionControls);
+    actionControls = action;
 }
 
 //------------------------------------
