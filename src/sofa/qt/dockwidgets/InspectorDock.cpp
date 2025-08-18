@@ -206,7 +206,7 @@ void InspectorDock::updateContentFromBase(sofa::core::objectmodel::Base* base)
             QFormLayout* formLayout = new QFormLayout(box);
             box->setLayout(formLayout);
             box->setCheckable(true);
-            box->setMaximumWidth(350);
+            //box->setMaximumWidth(350);
             verticalLayout->addWidget(box);
             verticalLayout->setAlignment(Qt::AlignTop);
 
