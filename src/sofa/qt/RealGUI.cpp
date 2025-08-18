@@ -94,6 +94,7 @@ using sofa::simulation::SceneLoaderFactory;
 #include <QMimeData>
 #include <QCompleter>
 #include <QDesktopServices>
+#include <QStyleHints>
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 11, 0))
 #include <QDesktopWidget>
@@ -143,12 +144,54 @@ using namespace sofa::core::visual;
 class QSOFAApplication : public QApplication
 {
 public:
+    bool isDarkMode() {
+    #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+      const auto scheme = QGuiApplication::styleHints()->colorScheme();
+      return scheme == Qt::ColorScheme::Dark;
+    #else
+      const QPalette defaultPalette;
+      const auto text = defaultPalette.color(QPalette::WindowText);
+      const auto window = defaultPalette.color(QPalette::Window);
+      return text.lightness() > window.lightness();
+    #endif // QT_VERSION
+    }
+
+    void setLightModeColors(){
+        msg_info("runSofa") << "Use light mode color scheme.";
+        setStyle("Fusion");
+        QPalette palette = QApplication::style()->standardPalette();
+        setStyleSheet(R"(
+                    QToolTip { color: black; background-color: #fff8dc; border: 1px solid white; }
+                )");
+        setPalette(palette);
+    }
+
+    void setDarkModeColors()
+    {
+        msg_info("runSofa") << "Use dark mode color scheme.";
+        setStyle("Fusion");
+
+        QPalette palette = QApplication::style()->standardPalette();
+        QColor text = palette.color(QPalette::ButtonText);
+        setStyleSheet(R"(
+                    QToolTip { color: black; background-color: #fff8dc; border: 1px solid white; }
+                )");
+        palette.setColor(QPalette::Button, palette.color(QPalette::Base));
+        setPalette(palette);
+    }
+
     QSOFAApplication(int &argc, char ** argv)
         : QApplication(argc,argv)
     {
         QCoreApplication::setOrganizationName("Sofa Consortium");
         QCoreApplication::setOrganizationDomain("sofa");
         QCoreApplication::setApplicationName("runSofa");
+
+        if(isDarkMode()){
+            setDarkModeColors();
+        }else{
+            setLightModeColors();
+        }
     }
 
 #if QT_VERSION < 0x050000
