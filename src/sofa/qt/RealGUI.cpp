@@ -528,6 +528,18 @@ RealGUI::RealGUI ( const char* viewername)
     View->insertAction(actionControls, action);
     View->removeAction(actionControls);
     actionControls = action;
+
+    connect(actionViewerShowDocumentation, &QAction::triggered, this, [this](bool){
+        QDialog* dialog=new QDialog();
+        auto tmp = new Ui::windowViewerShortcuts();
+        tmp->setupUi(dialog);
+        sofa::qt::viewer::SofaViewer* sofaViewer = dynamic_cast<sofa::qt::viewer::SofaViewer*>(getViewer());
+        if(sofaViewer)
+            tmp->content->setText(sofaViewer->helpString());
+        else
+            tmp->content->setText("No documentation for this viewer");
+        dialog->open();
+    });
 }
 
 //------------------------------------
@@ -1518,14 +1530,6 @@ void RealGUI::initViewer(BaseViewer* _viewer)
         connect(showObjectSurfaces, &QCheckBox::clicked, this, [this, sofaViewer](bool checked){sofaViewer->m_showSelectedObjectSurfaces = checked;});
         connect(showObjectVolumes, &QCheckBox::clicked, this, [this, sofaViewer](bool checked){sofaViewer->m_showSelectedObjectVolumes = checked;});
         connect(showObjectIndices, &QCheckBox::clicked, this, [this, sofaViewer](bool checked){sofaViewer->m_showSelectedObjectIndices = checked;});
-
-        connect(actionViewerShowDocumentation, &QAction::triggered, this, [this, sofaViewer](bool state){
-            QDialog* dialog=new QDialog();
-            auto tmp = new Ui::windowViewerShortcuts();
-            tmp->setupUi(dialog);
-            tmp->content->setText(sofaViewer->helpString());
-            dialog->open();
-        });
 
         connect(Ui_GUI::value, &QDoubleSpinBox::valueChanged,
                 this, [sofaViewer](double value){sofaViewer->m_visualScaling = value;});
