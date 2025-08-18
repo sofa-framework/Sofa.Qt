@@ -144,40 +144,13 @@ using namespace sofa::core::visual;
 class QSOFAApplication : public QApplication
 {
 public:
-    bool isDarkMode() {
-    #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-      const auto scheme = QGuiApplication::styleHints()->colorScheme();
-      return scheme == Qt::ColorScheme::Dark;
-    #else
-      const QPalette defaultPalette;
-      const auto text = defaultPalette.color(QPalette::WindowText);
-      const auto window = defaultPalette.color(QPalette::Window);
-      return text.lightness() > window.lightness();
-    #endif // QT_VERSION
-    }
-
-    void setLightModeColors(){
-        msg_info("runSofa") << "Use light mode color scheme.";
+    void setDefaultStyle(){
         setStyle("Fusion");
         QPalette palette = QApplication::style()->standardPalette();
+        setPalette(palette);
         setStyleSheet(R"(
                     QToolTip { color: black; background-color: #fff8dc; border: 1px solid white; }
                 )");
-        setPalette(palette);
-    }
-
-    void setDarkModeColors()
-    {
-        msg_info("runSofa") << "Use dark mode color scheme.";
-        setStyle("Fusion");
-
-        QPalette palette = QApplication::style()->standardPalette();
-        QColor text = palette.color(QPalette::ButtonText);
-        setStyleSheet(R"(
-                    QToolTip { color: black; background-color: #fff8dc; border: 1px solid white; }
-                )");
-        palette.setColor(QPalette::Button, palette.color(QPalette::Base));
-        setPalette(palette);
     }
 
     QSOFAApplication(int &argc, char ** argv)
@@ -187,11 +160,7 @@ public:
         QCoreApplication::setOrganizationDomain("sofa");
         QCoreApplication::setApplicationName("runSofa");
 
-        if(isDarkMode()){
-            setDarkModeColors();
-        }else{
-            setLightModeColors();
-        }
+        setDefaultStyle();
     }
 
 #if QT_VERSION < 0x050000
