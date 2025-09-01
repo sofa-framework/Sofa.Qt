@@ -248,6 +248,7 @@ private:
     void	DisplayOBJs();
     void	DisplayMenu(void);
     virtual void	drawScene() override ;
+    void  drawOverlays();
     void  MakeStencilMask();
 
     void	ApplySceneTransformation(int x, int y);

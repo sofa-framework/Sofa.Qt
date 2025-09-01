@@ -26,6 +26,7 @@
 #include <vector>
 
 #include <ui_GUI.h>
+#include <ui_ViewerShortcuts.h>
 #include "GraphListenerQListView.h"
 #include "QMenuFilesRecentlyOpened.h"
 #include "AboutSOFADialog.h"
@@ -388,10 +389,6 @@ signals:
 //-----------------SIGNALS-SLOTS------------------------}
 
 };
-
-
-
-
 
 struct ActivationFunctor
 {

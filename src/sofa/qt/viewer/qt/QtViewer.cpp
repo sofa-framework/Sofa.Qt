@@ -569,6 +569,8 @@ void QtViewer::DisplayOBJs()
 
         sofa::simulation::node::draw(vparams, groot.get());
 
+
+
         if (m_bShowAxis)
         {
             const SReal* minBBox = vparams->sceneBBox().minBBoxPtr();
@@ -945,6 +947,11 @@ void QtViewer::calcProjection(int width, int height)
     vparams->setProjectionMatrix(projectionMatrix);
 }
 
+void QtViewer::drawOverlays()
+{
+
+}
+
 // ---------------------------------------------------------
 // ---
 // ---------------------------------------------------------
@@ -965,6 +972,11 @@ void QtViewer::paintGL()
 
     // draw the scene
     drawScene();
+
+    // draw the visual hints on the currently selected object
+    drawSelection(vparams);
+
+    drawOverlays();
 
     if(!captureTimer.isActive())
     {
