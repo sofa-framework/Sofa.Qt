@@ -91,12 +91,10 @@ if(Sofa.GL_FOUND)
         find_package(QGLViewer QUIET)
         if(NOT QGLViewer_FOUND AND SOFA_ALLOW_FETCH_DEPENDENCIES)
             message("Sofa.Qt: DEPENDENCY QGLViewer NOT FOUND. SOFA_ALLOW_FETCH_DEPENDENCIES is ON, fetching QGLViewer...")
-            include(FetchContent)
-            FetchContent_Declare(QGLViewer
+            sofa_fetch_dependency(QGLViewer
                     GIT_REPOSITORY https://github.com/sofa-framework/libQGLViewer/
                     GIT_TAG v2.8.1_SOFA
             )
-            FetchContent_MakeAvailable(QGLViewer)
         elseif (NOT QGLViewer_FOUND)
             message(FATAL_ERROR "Sofa.Qt: DEPENDENCY QGLViewer NOT FOUND. SOFA_ALLOW_FETCH_DEPENDENCIES is OFF and thus cannot be fetched. Install QGLViewer (version=2.8.0), or enable SOFA_ALLOW_FETCH_DEPENDENCIES to fix this issue.")
         endif()
@@ -234,6 +232,7 @@ set(UI_FILES
     ${SRC_ROOT}/GUI.ui
     ${SRC_ROOT}/MouseManager.ui
     ${SRC_ROOT}/PluginManager.ui
+    ${SRC_ROOT}/ViewerShortcuts.ui
     ${SRC_ROOT}/VideoRecorderManager.ui
 )
 set(QRC_FILES

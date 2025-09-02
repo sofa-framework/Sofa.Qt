@@ -80,6 +80,8 @@ public:
     void setPropertyWidget(QDisplayPropertyWidget* propertyWid) {propertyWidget = propertyWid;}
     void addInPropertyWidget(QTreeWidgetItem *item, bool clear);
 
+    const std::set<core::Base::SPtr> getCurrentSelectedBases() const;
+
     void Clear(sofa::simulation::Node* rootNode);
 
     /// Updates the view so it is synchronized with the simulation graph.
