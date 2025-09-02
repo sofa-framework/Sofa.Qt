@@ -1454,7 +1454,7 @@ void RealGUI::initViewer(BaseViewer* _viewer)
             dialog->open();
         });
 
-        connect(Ui_GUI::value, &QDoubleSpinBox::valueChanged,
+        connect(Ui_GUI::value, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
                 this, [sofaViewer](double value){sofaViewer->m_visualScaling = value;});
 
         connect ( this, SIGNAL( newStep()), sofaViewer->getQWidget(), SLOT( update()));
