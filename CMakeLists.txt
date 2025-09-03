@@ -102,7 +102,7 @@ if(Sofa.GL_FOUND)
 
         find_package(QGLViewer QUIET)
         if(QGLViewer_FOUND)
-            # XXX Don't get why we don't have to force Qt Xml installation on windows
+            # NOTE @olivier-roussel : Don't get why we don't have to force Qt Xml installation on windows
             # when QGLViewer is fetched
             if(SOFA_BUILD_RELEASE_PACKAGE AND CMAKE_SYSTEM_NAME STREQUAL Windows)
                 sofa_install_libraries(TARGETS QGLViewer)
