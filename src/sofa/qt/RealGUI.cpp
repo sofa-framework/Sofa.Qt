@@ -94,6 +94,7 @@ using sofa::simulation::SceneLoaderFactory;
 #include <QMimeData>
 #include <QCompleter>
 #include <QDesktopServices>
+#include <QStyleHints>
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 11, 0))
 #include <QDesktopWidget>
@@ -143,12 +144,22 @@ using namespace sofa::core::visual;
 class QSOFAApplication : public QApplication
 {
 public:
+    void setStyle(){
+        QPalette palette = QApplication::style()->standardPalette();
+        setPalette(palette);
+        setStyleSheet(R"(
+                    QToolTip { color: black; background-color: #fff8dc; border: 1px solid white; }
+                )");
+    }
+
     QSOFAApplication(int &argc, char ** argv)
         : QApplication(argc,argv)
     {
         QCoreApplication::setOrganizationName("Sofa Consortium");
         QCoreApplication::setOrganizationDomain("sofa");
         QCoreApplication::setApplicationName("runSofa");
+
+        setStyle();
     }
 
 #if QT_VERSION < 0x050000
