@@ -484,6 +484,7 @@ RealGUI::~RealGUI()
     delete handleTraceVisitor;
 #endif
 
+    saveSettings(m_viewer);
     removeViewer();
 
     FileMonitor::removeListener(m_filelistener);
@@ -1399,6 +1400,43 @@ void RealGUI::stopDumpVisitor()
 #endif
 }
 
+void RealGUI::saveSettings(BaseViewer* viewer)
+{
+    if(!viewer)
+        return;
+
+    const std::string settingsFile = BaseGUI::getConfigDirectoryPath() + "/QSettings.ini";
+    QSettings settings(settingsFile.c_str(), QSettings::IniFormat);
+
+    settings.setValue("viewer/showSelectedNodeBoundingBox", viewer->m_showSelectedNodeBoundingBox);
+    settings.setValue("viewer/showSelectedObjectBoundingBox", viewer->m_showSelectedObjectBoundingBox);
+    settings.setValue("viewer/showSelectedObjectPositions", viewer->m_showSelectedObjectPositions);
+    settings.setValue("viewer/showSelectedObjectSurfaces", viewer->m_showSelectedObjectSurfaces);
+    settings.setValue("viewer/showSelectedObjectVolumes", viewer->m_showSelectedObjectVolumes);
+    settings.setValue("viewer/showSelectedObjectIndices", viewer->m_showSelectedObjectIndices);
+    settings.setValue("viewer/visualScaling", viewer->m_visualScaling);
+    settings.sync();
+}
+
+void RealGUI::loadSettings(BaseViewer* viewer)
+{
+    if(!viewer)
+        return;
+
+    // Load configs from the settings
+    const std::string settingsFile = BaseGUI::getConfigDirectoryPath() + "/QSettings.ini";
+    QSettings settings(settingsFile.c_str(), QSettings::IniFormat);
+
+    viewer->m_showSelectedNodeBoundingBox = settings.value("viewer/showSelectedNodeBoundingBox").toBool();
+    viewer->m_showSelectedObjectBoundingBox = settings.value("viewer/showSelectedObjectBoundingBox").toBool();
+    viewer->m_showSelectedObjectPositions = settings.value("viewer/showSelectedObjectPositions").toBool();
+    viewer->m_showSelectedObjectSurfaces = settings.value("viewer/showSelectedObjectSurfaces").toBool();
+    viewer->m_showSelectedObjectVolumes = settings.value("viewer/showSelectedObjectVolumes").toBool();
+    viewer->m_showSelectedObjectIndices = settings.value("viewer/showSelectedObjectIndices").toBool();
+    viewer->m_visualScaling = settings.value("viewer/visualScaling", 0.10).toFloat();
+}
+
+
 //------------------------------------
 
 void RealGUI::initViewer(BaseViewer* _viewer)
@@ -1423,10 +1461,7 @@ void RealGUI::initViewer(BaseViewer* _viewer)
         sofaViewer->getQWidget()->setFocusPolicy ( Qt::StrongFocus );
 
         sofaViewer->getQWidget()->setSizePolicy ( QSizePolicy ( ( QSizePolicy::Policy ) 7,
-                                                                ( QSizePolicy::Policy ) 7
-                                                                //, 100, 1,
-                                                                //sofaViewer->getQWidget()->sizePolicy().hasHeightForWidth() )
-                                                                ));
+                                                                ( QSizePolicy::Policy ) 7));
 
         sofaViewer->getQWidget()->setMinimumSize ( QSize ( 0, 0 ) );
         sofaViewer->getQWidget()->setMouseTracking ( true );
@@ -1442,6 +1477,9 @@ void RealGUI::initViewer(BaseViewer* _viewer)
                 sofaViewer->getQWidget(), SLOT( fitNodeBBox(sofa::core::objectmodel::BaseNode*) )
                 );
 
+        loadSettings(sofaViewer);
+
+        // Configures the UX
         Ui_GUI::showNodeBoundingBox->setChecked(sofaViewer->m_showSelectedNodeBoundingBox);
         Ui_GUI::showObjectBoundingBox->setChecked(sofaViewer->m_showSelectedObjectBoundingBox);
         Ui_GUI::showObjectPositions->setChecked(sofaViewer->m_showSelectedObjectPositions);
@@ -1581,10 +1619,17 @@ void RealGUI::createSimulationGraph()
     connect(simulationGraph, &QSofaListView::lockingChanged, this, &RealGUI::sceneGraphViewLockingChanged);
 
     // Activates the hoovering visual feedback only when working in interactive mode.
-    if(m_enableInteraction){
+    if(m_enableInteraction)
+    {
         connect(simulationGraph, &QSofaListView::itemSelectionChanged, this, [this](){
             getViewer()->setCurrentSelection(simulationGraph->getCurrentSelectedBases());
         });
+    }else
+    {
+        Ui_GUI::showNode->setEnabled(false);
+        Ui_GUI::showNode->setToolTip("To activate start sofa in interactive mode from the command line");
+        Ui_GUI::showObject->setEnabled(false);
+        Ui_GUI::showObject->setToolTip("To activate start sofa in interactive mode from the command line");
     }
 
     connect(simulationGraph, SIGNAL( RootNodeChanged(sofa::simulation::Node*, const char*) ), this, SLOT ( newRootNode(sofa::simulation::Node* , const char*) ) );
