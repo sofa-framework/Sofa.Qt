@@ -53,8 +53,10 @@ bool SelectableItemWidget::createWidgets()
 
     for (std::size_t i = 0; i < nbItems; i++)
     {
-        m_comboList->addItem(QString::fromUtf8(items[i].key));
-        m_comboList->setItemData(i, QString::fromUtf8(items[i].description), Qt::ToolTipRole);
+        auto key = items[i].key;
+        auto desc = items[i].description;
+        m_comboList->addItem(QString::fromUtf8(key.data(), key.size()));
+        m_comboList->setItemData(i, QString::fromUtf8(desc.data(), desc.size()), Qt::ToolTipRole);
     }
     m_comboList->setCurrentIndex(m_selectableItem->getSelectedId());
 
