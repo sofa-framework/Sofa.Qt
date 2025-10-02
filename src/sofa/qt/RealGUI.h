@@ -305,6 +305,9 @@ private:
     void createWindowVisitor();
     void createAdvancedTimerProfilerWindow();
 
+    void saveSettings(sofa::gui::common::BaseViewer*);
+    void loadSettings(sofa::gui::common::BaseViewer*);
+
 public slots:
     virtual void newRootNode(sofa::simulation::Node* root, const char* path);
     virtual void activateNode(sofa::simulation::Node* , bool );
