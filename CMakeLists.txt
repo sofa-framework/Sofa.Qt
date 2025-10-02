@@ -183,7 +183,9 @@ set(MOC_HEADER_FILES
     ${SRC_ROOT}/SofaVideoRecorderManager.h
     ${SRC_ROOT}/SofaPluginManager.h
     ${SRC_ROOT}/SofaSceneGraphWidget.h
-    ${SRC_ROOT}/WDoubleLineEdit.h    
+    ${SRC_ROOT}/WDoubleLineEdit.h
+    ${SRC_ROOT}/datawidgets/OptionsGroupWidget.h
+    ${SRC_ROOT}/datawidgets/SelectableItemWidget.h
     )
 set(HEADER_FILES
     ${SRC_ROOT}/config.h.in
@@ -243,6 +245,8 @@ set(SOURCE_FILES
     ${SRC_ROOT}/SofaSceneGraphWidget.cpp
     ${SRC_ROOT}/viewer/VisualModelPolicy.cpp
     ${SRC_ROOT}/QtDataRepository.cpp
+    ${SRC_ROOT}/datawidgets/OptionsGroupWidget.cpp
+    ${SRC_ROOT}/datawidgets/SelectableItemWidget.cpp
 )
 set(UI_FILES
     ${SRC_ROOT}/AboutDialog.ui
