@@ -132,7 +132,7 @@
    <property name="minimumSize">
     <size>
      <width>200</width>
-     <height>637</height>
+     <height>594</height>
     </size>
    </property>
    <attribute name="dockWidgetArea">
@@ -289,9 +289,6 @@
            <widget class="QPushButton" name="startButton">
             <property name="toolTip">
              <string>Launch the Simulation</string>
-            </property>
-            <property name="autoFillBackground">
-             <bool>true</bool>
             </property>
             <property name="text">
              <string>&amp;Animate</string>

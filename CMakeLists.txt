@@ -23,6 +23,18 @@ if (NOT Qt6Core_FOUND)
     find_package(Qt5 COMPONENTS Core QUIET)
 endif()
 
+# Qt versions installed by conda packages include some extra dependencies
+if(QT_LIBINFIX STREQUAL "_conda")
+    message("Found Qt installed by conda package. Getting specific extra dependencies...")
+    # Qt5 and Qt6 dependencies
+    sofa_find_package(ZSTD REQUIRED) # required by Qt5::Core_conda
+    sofa_find_package(PCRE2 COMPONENTS 16BIT REQUIRED) # required by Qt5::Core_conda
+    sofa_find_package(PNG REQUIRED) # required by Qt5::Gui_conda
+    if(SOFA_BUILD_RELEASE_PACKAGE AND CMAKE_SYSTEM_NAME STREQUAL Windows)
+        sofa_install_libraries(TARGETS ZSTD::ZSTD PNG::PNG PCRE2::16BIT)
+    endif()
+endif()
+
 if (Qt6Core_FOUND)
     message("${PROJECT_NAME}: will use Qt6")
     find_package(Qt6 COMPONENTS Gui GuiTools Widgets WidgetsTools OpenGLWidgets REQUIRED)
@@ -89,14 +101,23 @@ if(Sofa.GL_FOUND)
     if(SOFA_QT_ENABLE_QGLVIEWER)
 
         find_package(QGLViewer QUIET)
-        if(NOT QGLViewer_FOUND AND SOFA_ALLOW_FETCH_DEPENDENCIES)
+        if(QGLViewer_FOUND)
+            # NOTE @olivier-roussel : Don't get why we don't have to force Qt Xml installation on windows
+            # when QGLViewer is fetched
+            if(SOFA_BUILD_RELEASE_PACKAGE AND CMAKE_SYSTEM_NAME STREQUAL Windows)
+                sofa_install_libraries(TARGETS QGLViewer)
+                if (Qt5Core_FOUND)
+                    sofa_install_libraries(TARGETS Qt5::Xml)
+                elseif (Qt6Core_FOUND)
+                    sofa_install_libraries(TARGETS Qt::Xml)
+                endif()
+            endif()
+        elseif(NOT QGLViewer_FOUND AND SOFA_ALLOW_FETCH_DEPENDENCIES)
             message("Sofa.Qt: DEPENDENCY QGLViewer NOT FOUND. SOFA_ALLOW_FETCH_DEPENDENCIES is ON, fetching QGLViewer...")
-            include(FetchContent)
-            FetchContent_Declare(QGLViewer
+            sofa_fetch_dependency(QGLViewer
                     GIT_REPOSITORY https://github.com/sofa-framework/libQGLViewer/
                     GIT_TAG v2.8.1_SOFA
             )
-            FetchContent_MakeAvailable(QGLViewer)
         elseif (NOT QGLViewer_FOUND)
             message(FATAL_ERROR "Sofa.Qt: DEPENDENCY QGLViewer NOT FOUND. SOFA_ALLOW_FETCH_DEPENDENCIES is OFF and thus cannot be fetched. Install QGLViewer (version=2.8.0), or enable SOFA_ALLOW_FETCH_DEPENDENCIES to fix this issue.")
         endif()
@@ -164,6 +185,8 @@ set(MOC_HEADER_FILES
     ${SRC_ROOT}/SofaSceneGraphWidget.h
     ${SRC_ROOT}/WDoubleLineEdit.h    
     ${SRC_ROOT}/dockwidgets/InspectorDock.h
+    ${SRC_ROOT}/datawidgets/OptionsGroupWidget.h
+    ${SRC_ROOT}/datawidgets/SelectableItemWidget.h
     )
 set(HEADER_FILES
     ${SRC_ROOT}/config.h.in
@@ -224,6 +247,8 @@ set(SOURCE_FILES
     ${SRC_ROOT}/viewer/VisualModelPolicy.cpp
     ${SRC_ROOT}/QtDataRepository.cpp
     ${SRC_ROOT}/dockwidgets/InspectorDock.cpp
+    ${SRC_ROOT}/datawidgets/OptionsGroupWidget.cpp
+    ${SRC_ROOT}/datawidgets/SelectableItemWidget.cpp
 )
 set(UI_FILES
     ${SRC_ROOT}/AboutDialog.ui

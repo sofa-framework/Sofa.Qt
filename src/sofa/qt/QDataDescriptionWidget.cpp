@@ -76,6 +76,7 @@ QDataDescriptionWidget::QDataDescriptionWidget(QWidget* parent, core::objectmode
     tabLayout->setContentsMargins(0,0,0,0);
     tabLayout->setSpacing(1);
     tabLayout->setObjectName("tabInfoLayout");
+    setAutoFillBackground(true);
 
     //Instance
     {

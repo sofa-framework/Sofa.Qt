@@ -96,6 +96,7 @@ using sofa::simulation::SceneLoaderFactory;
 #include <QMimeData>
 #include <QCompleter>
 #include <QDesktopServices>
+#include <QStyleHints>
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 11, 0))
 #include <QDesktopWidget>
@@ -145,62 +146,21 @@ using namespace sofa::core::visual;
 class QSOFAApplication : public QApplication
 {
 public:
+    void setStyle(){
+        QPalette palette = QApplication::style()->standardPalette();
+        setPalette(palette);
+        setStyleSheet(R"(
+                    QToolTip { color: black; background-color: #fff8dc; border: 1px solid white; }
+                )");
+    }
+
     QSOFAApplication(int &argc, char ** argv)
         : QApplication(argc,argv)
     {
         QCoreApplication::setOrganizationName("Sofa Consortium");
         QCoreApplication::setOrganizationDomain("sofa");
         QCoreApplication::setApplicationName("runSofa");
-        setStyle("Fusion");
-
-        setStyleSheet(R"(
-            QTabBar::tab {
-                background: #2F2F2F;
-                color: #8A8A8A;
-                padding: 6px;
-                border: 1px solid #222;
-                border-bottom: none; /* pour ne pas couper le contenu */
-                border-top-left-radius: 4px;
-                border-top-right-radius: 4px;
-            }
-
-            QTabBar::tab:selected {
-                background: #3F3F3F; /* Couleur active */
-                color: white;
-            }
-
-            QTabWidget::pane {
-                border: 1px solid #222;
-                top: -1px; /* pour coller l’onglet actif au contenu */
-            }
-
-            QToolTip { color: white; background-color: #353535; border: 1px solid white; }
-        )");
-
-
-        QPalette defaultPalette = QApplication::style()->standardPalette();
-        QColor text = defaultPalette.color(QPalette::ButtonText);
-
-        QPalette darkPalette;
-        darkPalette.setColor(QPalette::Window, QColor(63, 63, 63));
-        darkPalette.setColor(QPalette::WindowText, text);
-        darkPalette.setColor(QPalette::Base, QColor(63, 63, 63));
-        darkPalette.setColor(QPalette::AlternateBase, Qt::red);
-        darkPalette.setColor(QPalette::ToolTipBase, QColor(35, 35, 35));
-        darkPalette.setColor(QPalette::ToolTipText, text);
-        darkPalette.setColor(QPalette::Text, text);
-        darkPalette.setColor(QPalette::Button, QColor(63, 63, 63));
-        darkPalette.setColor(QPalette::ButtonText, text);
-        darkPalette.setColor(QPalette::BrightText, Qt::red);
-        darkPalette.setColor(QPalette::Highlight, QColor(142, 45, 197).lighter());
-        darkPalette.setColor(QPalette::HighlightedText, Qt::black);
-        darkPalette.setColor(QPalette::Disabled, QPalette::Text, QColor(127, 127, 127));
-        darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(127, 127, 127));
-        darkPalette.setColor(QPalette::Disabled, QPalette::WindowText, QColor(127, 127, 127));
-        darkPalette.setColor(QPalette::Disabled, QPalette::Highlight, QColor(80, 80, 80));
-        darkPalette.setColor(QPalette::Disabled, QPalette::HighlightedText, QColor(160, 160, 160));
-
-        setPalette(darkPalette);
+        setStyle();
     }
 
 #if QT_VERSION < 0x050000
@@ -554,6 +514,7 @@ RealGUI::~RealGUI()
     delete handleTraceVisitor;
 #endif
 
+    saveSettings(m_viewer);
     removeViewer();
 
     FileMonitor::removeListener(m_filelistener);
@@ -1473,6 +1434,43 @@ void RealGUI::stopDumpVisitor()
 #endif
 }
 
+void RealGUI::saveSettings(BaseViewer* viewer)
+{
+    if(!viewer)
+        return;
+
+    const std::string settingsFile = BaseGUI::getConfigDirectoryPath() + "/QSettings.ini";
+    QSettings settings(settingsFile.c_str(), QSettings::IniFormat);
+
+    settings.setValue("viewer/showSelectedNodeBoundingBox", viewer->m_showSelectedNodeBoundingBox);
+    settings.setValue("viewer/showSelectedObjectBoundingBox", viewer->m_showSelectedObjectBoundingBox);
+    settings.setValue("viewer/showSelectedObjectPositions", viewer->m_showSelectedObjectPositions);
+    settings.setValue("viewer/showSelectedObjectSurfaces", viewer->m_showSelectedObjectSurfaces);
+    settings.setValue("viewer/showSelectedObjectVolumes", viewer->m_showSelectedObjectVolumes);
+    settings.setValue("viewer/showSelectedObjectIndices", viewer->m_showSelectedObjectIndices);
+    settings.setValue("viewer/visualScaling", viewer->m_visualScaling);
+    settings.sync();
+}
+
+void RealGUI::loadSettings(BaseViewer* viewer)
+{
+    if(!viewer)
+        return;
+
+    // Load configs from the settings
+    const std::string settingsFile = BaseGUI::getConfigDirectoryPath() + "/QSettings.ini";
+    QSettings settings(settingsFile.c_str(), QSettings::IniFormat);
+
+    viewer->m_showSelectedNodeBoundingBox = settings.value("viewer/showSelectedNodeBoundingBox").toBool();
+    viewer->m_showSelectedObjectBoundingBox = settings.value("viewer/showSelectedObjectBoundingBox").toBool();
+    viewer->m_showSelectedObjectPositions = settings.value("viewer/showSelectedObjectPositions").toBool();
+    viewer->m_showSelectedObjectSurfaces = settings.value("viewer/showSelectedObjectSurfaces").toBool();
+    viewer->m_showSelectedObjectVolumes = settings.value("viewer/showSelectedObjectVolumes").toBool();
+    viewer->m_showSelectedObjectIndices = settings.value("viewer/showSelectedObjectIndices").toBool();
+    viewer->m_visualScaling = settings.value("viewer/visualScaling", 0.10).toFloat();
+}
+
+
 //------------------------------------
 
 void RealGUI::initViewer(BaseViewer* _viewer)
@@ -1497,10 +1495,7 @@ void RealGUI::initViewer(BaseViewer* _viewer)
         sofaViewer->getQWidget()->setFocusPolicy ( Qt::StrongFocus );
 
         sofaViewer->getQWidget()->setSizePolicy ( QSizePolicy ( ( QSizePolicy::Policy ) 7,
-                                                                ( QSizePolicy::Policy ) 7
-                                                                //, 100, 1,
-                                                                //sofaViewer->getQWidget()->sizePolicy().hasHeightForWidth() )
-                                                                ));
+                                                                ( QSizePolicy::Policy ) 7));
 
         sofaViewer->getQWidget()->setMinimumSize ( QSize ( 0, 0 ) );
         sofaViewer->getQWidget()->setMouseTracking ( true );
@@ -1516,6 +1511,9 @@ void RealGUI::initViewer(BaseViewer* _viewer)
                 sofaViewer->getQWidget(), SLOT( fitNodeBBox(sofa::core::objectmodel::BaseNode*) )
                 );
 
+        loadSettings(sofaViewer);
+
+        // Configures the UX
         Ui_GUI::showNodeBoundingBox->setChecked(sofaViewer->m_showSelectedNodeBoundingBox);
         Ui_GUI::showObjectBoundingBox->setChecked(sofaViewer->m_showSelectedObjectBoundingBox);
         Ui_GUI::showObjectPositions->setChecked(sofaViewer->m_showSelectedObjectPositions);
@@ -1531,7 +1529,15 @@ void RealGUI::initViewer(BaseViewer* _viewer)
         connect(showObjectVolumes, &QCheckBox::clicked, this, [this, sofaViewer](bool checked){sofaViewer->m_showSelectedObjectVolumes = checked;});
         connect(showObjectIndices, &QCheckBox::clicked, this, [this, sofaViewer](bool checked){sofaViewer->m_showSelectedObjectIndices = checked;});
 
-        connect(Ui_GUI::value, &QDoubleSpinBox::valueChanged,
+        connect(actionViewerShowDocumentation, &QAction::triggered, this, [this, sofaViewer](bool state){
+            QDialog* dialog=new QDialog();
+            auto tmp = new Ui::windowViewerShortcuts();
+            tmp->setupUi(dialog);
+            tmp->content->setText(sofaViewer->helpString());
+            dialog->open();
+        });
+
+        connect(Ui_GUI::value, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
                 this, [sofaViewer](double value){sofaViewer->m_visualScaling = value;});
 
         connect ( this, SIGNAL( newStep()), sofaViewer->getQWidget(), SLOT( update()));
@@ -1647,12 +1653,19 @@ void RealGUI::createSimulationGraph()
     connect(simulationGraph, &QSofaListView::lockingChanged, this, &RealGUI::sceneGraphViewLockingChanged);
 
     // Activates the hoovering visual feedback only when working in interactive mode.
-    if(m_enableInteraction){
+    if(m_enableInteraction)
+    {
         connect(simulationGraph, &QSofaListView::itemSelectionChanged, this, [this](){
             auto selectedItems = simulationGraph->getCurrentSelectedBases();
             getViewer()->setCurrentSelection(selectedItems);
             m_inspectorDock->setCurrentSelection(selectedItems);
         });
+    }else
+    {
+        Ui_GUI::showNode->setEnabled(false);
+        Ui_GUI::showNode->setToolTip("To activate start sofa in interactive mode from the command line");
+        Ui_GUI::showObject->setEnabled(false);
+        Ui_GUI::showObject->setToolTip("To activate start sofa in interactive mode from the command line");
     }
 
     connect(simulationGraph, SIGNAL( RootNodeChanged(sofa::simulation::Node*, const char*) ), this, SLOT ( newRootNode(sofa::simulation::Node* , const char*) ) );
