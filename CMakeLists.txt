@@ -183,7 +183,8 @@ set(MOC_HEADER_FILES
     ${SRC_ROOT}/SofaVideoRecorderManager.h
     ${SRC_ROOT}/SofaPluginManager.h
     ${SRC_ROOT}/SofaSceneGraphWidget.h
-    ${SRC_ROOT}/WDoubleLineEdit.h
+    ${SRC_ROOT}/WDoubleLineEdit.h    
+    ${SRC_ROOT}/dockwidgets/InspectorDock.h
     ${SRC_ROOT}/datawidgets/OptionsGroupWidget.h
     ${SRC_ROOT}/datawidgets/SelectableItemWidget.h
     )
@@ -245,6 +246,7 @@ set(SOURCE_FILES
     ${SRC_ROOT}/SofaSceneGraphWidget.cpp
     ${SRC_ROOT}/viewer/VisualModelPolicy.cpp
     ${SRC_ROOT}/QtDataRepository.cpp
+    ${SRC_ROOT}/dockwidgets/InspectorDock.cpp
     ${SRC_ROOT}/datawidgets/OptionsGroupWidget.cpp
     ${SRC_ROOT}/datawidgets/SelectableItemWidget.cpp
 )
@@ -257,6 +259,8 @@ set(UI_FILES
     ${SRC_ROOT}/PluginManager.ui
     ${SRC_ROOT}/ViewerShortcuts.ui
     ${SRC_ROOT}/VideoRecorderManager.ui
+    ${SRC_ROOT}/dockwidgets/InspectorDock.ui
+
 )
 set(QRC_FILES
     ${SRC_ROOT}/resources/RealGUI.qrc

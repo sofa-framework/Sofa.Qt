@@ -35,6 +35,8 @@
 #include "SofaWindowDataGraph.h"
 #endif
 
+#include <QStyleHints>
+#include "dockwidgets/InspectorDock.h"
 
 #include <mutex>
 #include <QScreen>
@@ -158,7 +160,6 @@ public:
         QCoreApplication::setOrganizationName("Sofa Consortium");
         QCoreApplication::setOrganizationDomain("sofa");
         QCoreApplication::setApplicationName("runSofa");
-
         setStyle();
     }
 
@@ -283,6 +284,7 @@ void RealGUI::CreateApplication(int /*_argc*/, char** /*_argv*/)
     *argc = 1;
     argv[0] = strdup ( BaseGUI::GetProgramName() );
     argv[1]=nullptr;
+
     application = new QSOFAApplication ( *argc,argv );
 
     //force locale to Standard C
@@ -361,7 +363,10 @@ RealGUI::RealGUI ( const char* viewername)
       m_viewerMSAANbSampling(1)
 {
     setupUi(this);
-    
+
+    m_inspectorDock = new InspectorDock(this);
+    addDockWidget(Qt::RightDockWidgetArea, m_inspectorDock);
+
     ExpandAllButton->setIcon(QIcon(":/RealGUI/expandAll"));
     CollapseAllButton->setIcon(QIcon(":/RealGUI/collapseAll"));
     sceneGraphRefreshToggleButton->setIcon(QIcon(":/RealGUI/sceneGraphRefresh"));
@@ -470,6 +475,31 @@ RealGUI::RealGUI ( const char* viewername)
     connect(helpAboutAction, SIGNAL(triggered()), this, SLOT(showAbout()));
 
     m_filelistener = new RealGUIFileListener(this);
+
+    // Replace the menu's actions by the one generated from the docks.
+    auto action = m_inspectorDock->toggleViewAction();
+    action->setText(actionInspector->text());
+    View->insertAction(actionInspector, action);
+    View->removeAction(actionInspector);
+    actionInspector = action;
+
+    action = dockWidget->toggleViewAction();
+    action->setText(actionControls->text());
+    View->insertAction(actionControls, action);
+    View->removeAction(actionControls);
+    actionControls = action;
+
+    connect(actionViewerShowDocumentation, &QAction::triggered, this, [this](bool){
+        QDialog* dialog=new QDialog();
+        auto tmp = new Ui::windowViewerShortcuts();
+        tmp->setupUi(dialog);
+        sofa::qt::viewer::SofaViewer* sofaViewer = dynamic_cast<sofa::qt::viewer::SofaViewer*>(getViewer());
+        if(sofaViewer)
+            tmp->content->setText(sofaViewer->helpString());
+        else
+            tmp->content->setText("There is no documentation for this viewer");
+        dialog->open();
+    });
 }
 
 //------------------------------------
@@ -778,6 +808,7 @@ void RealGUI::setSceneWithoutMonitor (Node::SPtr root, const char* filename, boo
         simulationGraph->resizeColumnToContents(0);
         statWidget->CreateStats(root.get());
 
+        m_inspectorDock->setCurrentSelection({root});
         getViewer()->setScene( root, filename );
         getViewer()->load();
         getViewer()->resetView();
@@ -817,6 +848,9 @@ void RealGUI::unloadScene(bool _withViewer)
 
     if(_withViewer && getViewer())
         getViewer()->setScene(nullptr);
+
+    m_inspectorDock->setCurrentSelection({});
+    getViewer()->setCurrentSelection({});
 }
 
 //------------------------------------
@@ -1622,7 +1656,9 @@ void RealGUI::createSimulationGraph()
     if(m_enableInteraction)
     {
         connect(simulationGraph, &QSofaListView::itemSelectionChanged, this, [this](){
-            getViewer()->setCurrentSelection(simulationGraph->getCurrentSelectedBases());
+            auto selectedItems = simulationGraph->getCurrentSelectedBases();
+            getViewer()->setCurrentSelection(selectedItems);
+            m_inspectorDock->setCurrentSelection(selectedItems);
         });
     }else
     {

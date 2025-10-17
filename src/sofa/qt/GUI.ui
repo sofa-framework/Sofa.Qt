@@ -103,6 +103,10 @@
     <addaction name="separator"/>
     <addaction name="separator"/>
     <addaction name="separator"/>
+    <addaction name="actionControls"/>
+    <addaction name="actionInspector"/>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="helpMenu">
     <property name="title">
@@ -154,10 +158,16 @@
         <bool>true</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>400</height>
+        </size>
        </property>
        <layout class="QVBoxLayout" name="_13">
         <property name="sizeConstraint">
@@ -657,9 +667,6 @@ State 2: dirty, in that state the button reflect the fact that the scene graph v
                 <property name="title">
                  <string>Show node</string>
                 </property>
-                <property name="checkable">
-                 <bool>false</bool>
-                </property>
                 <layout class="QVBoxLayout" name="verticalLayout_4">
                  <item>
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -685,9 +692,6 @@ State 2: dirty, in that state the button reflect the fact that the scene graph v
                 </property>
                 <property name="title">
                  <string>Show object</string>
-                </property>
-                <property name="checkable">
-                 <bool>false</bool>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout">
                  <item>
@@ -937,6 +941,28 @@ State 2: dirty, in that state the button reflect the fact that the scene graph v
   <action name="actionViewerShowDocumentation">
    <property name="text">
     <string>Viewer's shortcuts</string>
+   </property>
+  </action>
+  <action name="actionInspector">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Inspector</string>
+   </property>
+  </action>
+  <action name="actionControls">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Controls</string>
    </property>
   </action>
  </widget>
