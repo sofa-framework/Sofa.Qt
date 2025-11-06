@@ -83,12 +83,11 @@ QDisplayDataWidget::QDisplayDataWidget(QWidget* parent,
     gridLayout_->addWidget(datainfowidget_, 0,0);
     numWidgets_ += 1;
 
-
     DataWidget::CreatorArgument dwarg;
     dwarg.name =  data_->getName();
     dwarg.data = data_;
     dwarg.parent = this;
-    dwarg.readOnly = (data_->isReadOnly() && flags.READONLY_FLAG);
+    dwarg.readOnly = (data_->isReadOnly() && flags.READONLY_FLAG) || (data_->getParent() != nullptr);
 
     if( dynamic_cast<core::objectmodel::DataFileName*>(data_) != nullptr )
     {
