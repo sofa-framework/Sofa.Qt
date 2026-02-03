@@ -28,8 +28,8 @@
 #include <sofa/simulation/Simulation.h>
 #include <sofa/gl/gl.h>
 #include <sofa/gui/component/performer/ComponentMouseInteraction.h>
-#include <sofa/component/collision/geometry/SphereModel.h>
-#include <sofa/component/collision/geometry/TriangleModel.h>
+#include <sofa/component/collision/geometry/SphereCollisionModel.h>
+#include <sofa/component/collision/geometry/TriangleCollisionModel.h>
 #include <sofa/component/collision/response/contact/RayContact.h>
 #include <sofa/component/setting/MouseButtonSetting.h>
 
