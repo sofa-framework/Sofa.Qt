@@ -438,3 +438,5 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
     include(windeployqt)
     windeployqt(${PROJECT_NAME} ${CMAKE_BINARY_DIR}/bin bin)
 endif()
+
+add_subdirectory(extensions)
