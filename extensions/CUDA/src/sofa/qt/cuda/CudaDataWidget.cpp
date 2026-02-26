@@ -19,6 +19,8 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
+#include <sofa/qt/cuda/config.h>
+
 #include <sofa/qt/cuda/CudaDataWidget.h>
 #include <sofa/gpu/cuda/CudaTypes.h>
 #include <sofa/helper/Factory.inl>
@@ -34,25 +36,25 @@ using namespace sofa::defaulttype;
 
 Creator<DataWidgetFactory, SimpleDataWidget< Vec<1, int> > > DWClass_Vec12i("default", true);
 
-template class SOFA_GPU_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<int> >;
-template class SOFA_GPU_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<unsigned int> >;
-template class SOFA_GPU_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<float> >;
-template class SOFA_GPU_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<double> >;
+template class SOFA_QT_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<int> >;
+template class SOFA_QT_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<unsigned int> >;
+template class SOFA_QT_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<float> >;
+template class SOFA_QT_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<double> >;
 
-template class SOFA_GPU_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec1i> >;
-template class SOFA_GPU_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec2i> >;
-template class SOFA_GPU_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec3i> >;
-template class SOFA_GPU_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec4i> >;
+template class SOFA_QT_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec1i> >;
+template class SOFA_QT_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec2i> >;
+template class SOFA_QT_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec3i> >;
+template class SOFA_QT_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec4i> >;
 
-template class SOFA_GPU_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec1f> >;
-template class SOFA_GPU_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec2f> >;
-template class SOFA_GPU_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec3f> >;
-template class SOFA_GPU_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec4f> >;
+template class SOFA_QT_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec1f> >;
+template class SOFA_QT_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec2f> >;
+template class SOFA_QT_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec3f> >;
+template class SOFA_QT_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec4f> >;
 
-template class SOFA_GPU_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec1d> >;
-template class SOFA_GPU_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec2d> >;
-template class SOFA_GPU_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec3d> >;
-template class SOFA_GPU_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec4d> >;
+template class SOFA_QT_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec1d> >;
+template class SOFA_QT_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec2d> >;
+template class SOFA_QT_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec3d> >;
+template class SOFA_QT_CUDA_API TDataWidget<sofa::gpu::cuda::CudaVector<Vec4d> >;
 
 
 Creator<DataWidgetFactory, TableDataWidget< sofa::gpu::cuda::CudaVector<int>, TABLE_HORIZONTAL > > DWClass_cudaVectori("default", true);

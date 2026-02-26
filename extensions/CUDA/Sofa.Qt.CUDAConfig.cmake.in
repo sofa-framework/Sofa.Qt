@@ -1,4 +1,4 @@
-# CMake package configuration file for the BeamAdapter.CUDA library
+# CMake package configuration file for the Sofa.QT.CUDA library
 
 @PACKAGE_GUARD@
 @PACKAGE_INIT@
