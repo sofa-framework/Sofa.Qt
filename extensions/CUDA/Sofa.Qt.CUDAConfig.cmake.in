@@ -1,0 +1,9 @@
+# CMake package configuration file for the Sofa.QT.CUDA library
+
+@PACKAGE_GUARD@
+@PACKAGE_INIT@
+
+find_package(Sofa.Qt QUIET REQUIRED)
+find_package(SofaCUDA QUIET REQUIRED)
+
+check_required_components(Sofa.Qt.CUDA)
