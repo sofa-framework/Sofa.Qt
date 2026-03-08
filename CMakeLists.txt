@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.22)
 project(Sofa.Qt LANGUAGES CXX)
 
+include(cmake/environment.cmake)
+
 # Detect if component is compiled outside SOFA
 if ("${CMAKE_PROJECT_NAME}" STREQUAL "${PROJECT_NAME}")
     find_package(Sofa.Config REQUIRED)
@@ -404,7 +406,7 @@ endif()
 
 # FFMPEG
 if(FFMPEG_EXEC_FOUND)
-    install(PROGRAMS "${FFMPEG_EXEC_FILE}" DESTINATION bin COMPONENT applications)
+    install(PROGRAMS "${FFMPEG_EXEC_FILE}" DESTINATION ${RUNTIME_OUTPUT_DIRECTORY} COMPONENT applications)
 endif()
 
 find_package(SofaPython3 QUIET)
@@ -418,7 +420,7 @@ set(FFMPEG_EXEC_PATH "${FFMPEG_EXEC_FILE}") # absolute path for build dir, see .
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/etc/${PROJECT_NAME}.ini.in "${CMAKE_BINARY_DIR}/etc/${PROJECT_NAME}.ini")
 set(RESOURCES_DIR "../share/sofa/gui/qt")
 get_filename_component(FFMPEG_EXEC_FILENAME "${FFMPEG_EXEC_FILE}" NAME)
-set(FFMPEG_EXEC_PATH "../bin/${FFMPEG_EXEC_FILENAME}") # relative path for install dir, see .ini file
+set(FFMPEG_EXEC_PATH "../${RUNTIME_OUTPUT_DIRECTORY}/${FFMPEG_EXEC_FILENAME}") # relative path for install dir, see .ini file
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/etc/${PROJECT_NAME}.ini.in "${CMAKE_BINARY_DIR}/etc/installed${PROJECT_NAME}.ini")
 install(FILES "${CMAKE_BINARY_DIR}/etc/installed${PROJECT_NAME}.ini" DESTINATION etc RENAME ${PROJECT_NAME}.ini COMPONENT applications)
 
@@ -436,7 +438,7 @@ sofa_create_package_with_targets(
 # Qt deployment
 if(CMAKE_SYSTEM_NAME STREQUAL Windows)
     include(windeployqt)
-    windeployqt(${PROJECT_NAME} ${CMAKE_BINARY_DIR}/bin bin)
+    windeployqt(${PROJECT_NAME} ${CMAKE_BINARY_DIR}/${RUNTIME_OUTPUT_DIRECTORY} ${RUNTIME_OUTPUT_DIRECTORY})
 endif()
 
 add_subdirectory(extensions)
