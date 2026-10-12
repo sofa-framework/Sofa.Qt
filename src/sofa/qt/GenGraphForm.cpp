@@ -244,7 +244,7 @@ void GenGraphForm::doExport()
         return;
     }
     {
-        sofa::simulation::graph::ExportDotVisitor act(sofa::core::execparams::defaultInstance(), &fdot);
+        sofa::simulation::ExportDotVisitor act(sofa::core::execparams::defaultInstance(), &fdot);
         act.showNode = this->showNodes->isChecked();
         act.showObject = this->showObjects->isChecked();
         act.showBehaviorModel = this->showBehaviorModels->isChecked();

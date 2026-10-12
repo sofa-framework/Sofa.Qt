@@ -74,7 +74,7 @@ const std::string getClass(core::objectmodel::Base* obj){
     {
         return "Node";
     }
-    if (obj->toBaseObject())
+    if (obj->toBaseComponent())
     {
         if (obj->toContextObject())
             return "Context";
@@ -94,7 +94,7 @@ const std::string getClass(core::objectmodel::Base* obj){
         if (obj->toBaseForceField())
             return "ForceField";
         if (obj->toBaseAnimationLoop()
-                || obj->toOdeSolver())
+                || obj->toBaseIntegrationScheme())
             return "Solver";
         if (obj->toPipeline()
                 || obj->toIntersection()
@@ -185,7 +185,7 @@ QPixmap* getPixmap(core::objectmodel::Base* obj, bool haveInfo, bool haveWarning
 
         return pixmaps[flags] ;
     }
-    else if (obj->toBaseObject())
+    else if (obj->toBaseComponent())
     {
         if (obj->toContextObject())
             flags |= 1 << CONTEXT;
@@ -205,7 +205,7 @@ QPixmap* getPixmap(core::objectmodel::Base* obj, bool haveInfo, bool haveWarning
         else if (obj->toBaseForceField())
             flags |= 1 << FFIELD;
         if (obj->toBaseAnimationLoop()
-                || obj->toOdeSolver())
+                || obj->toBaseIntegrationScheme())
             flags |= 1 << SOLVER;
         if (obj->toPipeline()
                 || obj->toIntersection()
